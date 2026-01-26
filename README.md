@@ -1,5 +1,7 @@
 # PyFolio Core
 
+![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+
 **PyFolio Core** is a robust, open-source financial portfolio tracking engine built with Python. Designed as a backend kernel, it fetches real-time asset data from public APIs and stores it locally.
 
 It is built with **Clean Architecture** principles to serve as a foundation for future GUI (PySide) or Web applications.
