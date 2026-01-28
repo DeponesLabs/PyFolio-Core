@@ -10,6 +10,7 @@ logger = logging.getLogger("FundService")
 class FundDataService:
 
     def __init__(self, db_path: str):
+        
         self.db_path = db_path
         self.crawler = Crawler()
 
@@ -76,3 +77,42 @@ class FundDataService:
         conn.commit()
         conn.close()
         logger.info(f"Fund update complete. {update_count} funds updated.")
+
+
+
+    def get_tv_session():
+        
+        load_dotenv()
+        user = os.getenv("TV_USERNAME")
+        password = os.getenv("TV_PASSWORD")
+        if user and password:
+            return TvDatafeed(username=user, password=password)
+        return TvDatafeed()
+
+    def fetch_bist_tickers():
+        print("🌍 Scanning market (Scanner)...")
+        url = "https://scanner.tradingview.com/turkey/scan"
+        payload = {
+            "filter": [{"left": "type", "operation": "equal", "right": "stock"}],
+            "options": {"lang": "tr"},
+            "symbols": {"query": {"types": []}, "tickers": [], "groups": []},
+            "columns": ["name"],
+            "range": [0, 2000]
+        }
+        try:
+            response = requests.post(url, json=payload)
+            data = response.json()
+            return [item['d'][0] for item in data['data']]
+        except Exception:
+            return []
+
+    def get_stock_data(tv, symbol) -> StockValue | None:
+
+        try:
+            df = tv.get_hist(symbol=symbol, exchange=EXCHANGE, interval=Interval.in_daily, n_bars=1)
+            if df is not None and not df.empty:
+                df = df.reset_index()
+                return StockValue.from_tv_row(symbol, df.iloc[-1])
+        except Exception:
+            pass
+        return None

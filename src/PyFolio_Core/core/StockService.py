@@ -1,13 +1,15 @@
 import time
+import requests
 import sqlite3
 import logging
+import pandas as pd
 from tvDatafeed import TvDatafeed, Interval
 from typing import Optional, Union
 
 from Interfaces import StockService
+from pyfolio_core.database import db_manager
 from enums import Exchange
 
-# Logging Settings
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -17,16 +19,16 @@ logger = logging.getLogger("MarketService")
 
 class TradingViewService(StockService):
 
-    def __init__(self, db_path: str, exchange: Union[Exchange, str] = Exchange.BIST):
+    def __init__(self, db_manager: str, exchange: Union[Exchange, str] = Exchange.BIST):
         
-        self.db_path = db_path
+        self.db_manager = db_manager
         
         self.exchange = exchange.value if isinstance(exchange, Exchange) else str(exchange).upper()
             
         self.tv = None  # Lazy-loading
         self._clean_map = str.maketrans('', '', '\u200b\t\n\r ')
 
-    def _get_connection(self):
+    def _get_server_connection(self):
 
         if self.tv is None:
             logger.info("Connecting to TradingView servers...")
@@ -46,7 +48,7 @@ class TradingViewService(StockService):
     def fetch_price(self, symbol: str) -> Optional[float]:
         
         clean_sym = self._clean_symbol(symbol)
-        tv = self._get_connection()
+        tv = self._get_server_connection()
 
         try:
             data = tv.get_hist(
@@ -71,7 +73,6 @@ class TradingViewService(StockService):
 
         clean_sym = self._clean_symbol(symbol)
         
-        # Float -> Cents Dönüşümü
         price_cents = int(round(price_float * 100))
 
         try:
@@ -85,7 +86,6 @@ class TradingViewService(StockService):
                 """, (price_cents, clean_sym))
                 conn.commit()
                 
-                # Etkilenen satır sayısını kontrol et
                 if cursor.rowcount > 0:
                     logger.info(f"{clean_sym}: {price_float:.2f} updated to TL.")
                     return True
@@ -126,3 +126,67 @@ class TradingViewService(StockService):
                     success_count += 1
         
         logger.info(f"Update complete. Success: {success_count}/{len(symbols)}")
+
+    def get_all_bist_symbols():
+        # TradingView Scanner Endpoint (Halka açık tarama sunucusu)
+        url = "https://scanner.tradingview.com/turkey/scan"
+
+        # Payload
+        payload = {
+            "filter": [
+                {"left": "type", "operation": "equal", "right": "stock"}, # Only stocks
+                {"left": "subtype", "operation": "in_range", "right": ["common", "preference"]}
+            ],
+            "options": {
+                "lang": "tr"
+            },
+            "symbols": {
+                "query": {
+                    "types": []
+                },
+                "tickers": []
+            },
+            "columns": [
+                "name",         # Symbol
+                "description",  # Company name
+                "sector",       # Sector (Ulaştırma)
+                "close"         # Current price (Optional, for check)
+            ],
+            "sort": {
+                "sortBy": "name",
+                "sortOrder": "asc"
+            },
+            "range": [0, 1000] # Get first 1000. (There are already around 600 on BIST (Istanbul Stock Exchange))
+        }
+
+        print("Connecting to the TradingView server...")
+        
+        try:
+            response = requests.post(url, json=payload)
+            data = response.json()
+            
+            total_count = data['totalCount']
+            print(f"The server found {total_count} shares.")
+
+            asset_list = []
+            for item in data['data']:
+                d = item['d'] # Data array
+                asset_list.append({
+                    "symbol": d[0],
+                    "company_name": d[1],
+                    "sector": d[2],
+                    "last_price": d[3]
+                })
+
+            df = pd.DataFrame(asset_list)
+            df.to_csv("bist_full_list.csv", index=False)
+            
+            return df
+
+        except Exception as e:
+            print(f"Error occured: {e}")
+            return None
+
+
+
+

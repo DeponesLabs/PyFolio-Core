@@ -1,5 +1,6 @@
 pandas
 requests
-websocket-client
+duckdb
 tvdatafeed @ git+https://github.com/rongardF/tvdatafeed.git
+websocket-client
 tefas-crawler

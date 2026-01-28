@@ -1,0 +1,9 @@
+requests
+pandas
+tvdatafeed
+colorama
+python-dotenv
+websocket-client
+
+[dev]
+pytest

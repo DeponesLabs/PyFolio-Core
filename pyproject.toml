@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyFolio-Core"
+version = "0.1.0"
+description = "Personal Finance and Trading Automation System"
+authors = [
+  { name = "Berk Acunas", email = "info@deponessoft.com" },
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "GNU General Public License v3 (GPLv3)" }
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "requests",
+    "pandas",
+    "tvdatafeed",
+    "colorama",
+    "python-dotenv",
+    "websocket-client"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+# CLI Command Definition
+# [project.scripts]
+# trade-bot = "pyfolio_core.main:run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pyfolio_core*"]
