@@ -4,7 +4,7 @@ import pandas as pd
 from tefas import Crawler
 from typing import Dict
 
-from pyfolio_core.database.database import LocalDatabase
+from pyfolio_core.core.database import LocalDatabase
 from pyfolio_core.core.constants import SCALING_FACTOR
 
 logger = logging.getLogger("FundService")

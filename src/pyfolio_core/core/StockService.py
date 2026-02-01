@@ -5,10 +5,10 @@ from tvDatafeed import TvDatafeed, Interval
 from typing import Optional, List, Union
 
 from pyfolio_core.core.Interfaces import StockService
-from pyfolio_core.database.database import LocalDatabase
+from pyfolio_core.core.database import MarketDatabase, PortfolioDatabase
 from pyfolio_core.core.enums import Exchange
 from pyfolio_core.core.constants import SCALING_FACTOR
-
+from pyfolio_core.core.domainobjects import StockValue
 
 logger = logging.getLogger("TradingViewService")
 logger.setLevel(logging.INFO)
@@ -30,9 +30,10 @@ if not logger.handlers:
 
 class TradingViewService(StockService):
 
-    def __init__(self, db_path: str, exchange: Union[Exchange, str] = Exchange.BIST):
+    def __init__(self, market_db_path: str, pfolio_db_path: str, exchange: Union[Exchange, str] = Exchange.BIST):
         
-        self.db_manager = LocalDatabase(db_path)
+        self.market_db = MarketDatabase(market_db_path)
+        self.pfolio_db = PortfolioDatabase(pfolio_db_path)
         
         self.exchange = exchange.value if isinstance(exchange, Exchange) else str(exchange).upper()
             
@@ -88,16 +89,16 @@ class TradingViewService(StockService):
         if price_float is None:
             return False
         
-        price_integer = int(round(price_float * SCALING_FACTOR))
+        price = int(round(price_float * SCALING_FACTOR))
 
         try:
-            conn = self.db_manager.get_connection()
+            conn = self.market_db.get_connection()
             conn.execute("""
                 UPDATE portfolio_assets 
-                SET current_price_integer = ?,
+                SET current_price = ?,
                     last_updated = current_timestamp
                 WHERE symbol = ?
-            """, (price_integer, clean_sym))
+            """, (price, clean_sym))
             
             logger.info(f"{clean_sym}: {price_float:.2f} updated.")
             return True
@@ -110,7 +111,7 @@ class TradingViewService(StockService):
         logger.info("*** Mass Portfolio Update Begins ***")
         
         try:
-            conn = self.db_manager.get_connection()
+            conn = self.market_db.get_connection()
             result = conn.execute("SELECT symbol FROM portfolio_assets WHERE asset_type = 'STOCK'").fetchall()
             raw_symbols = [row[0] for row in result]
         except Exception as e:
@@ -189,7 +190,7 @@ class TradingViewService(StockService):
             logger.error(f"Scanner Exception: {e}")
             return []
 
-    def fetch_market_daily_close(self) -> None:
+    def fetch_market_daily_close(self) -> StockValue:
         
         logger.info(f"{self.exchange} Daily Market Data Sync Started...")
         
@@ -198,44 +199,50 @@ class TradingViewService(StockService):
             logger.info(f"Ticker list read error.")
             return
 
-        conn = self.db_manager.get_connection()
+        conn = self.market_db.get_connection()
         tv = self._get_server_connection()
         
         print(f"Toplam {len(tickers)} hisse işlenecek.")
                 
         success_count = 0
         
+        stockvalues: list[StockService] = []
         for symbol in tickers:
             try:
                 df = tv.get_hist(symbol=symbol, exchange=self.exchange, interval=Interval.in_daily, n_bars=1)
                 
                 if df is not None and not df.empty:
                     row = df.iloc[-1]
+                    stockvalue = StockValue.from_tv_dataframe(symbol, row)
                     event_date = row.name.strftime('%Y-%m-%d')
-                    open_integer = int(round(row['open'] * SCALING_FACTOR))
-                    high_integer = int(round(row['high'] * SCALING_FACTOR))
-                    low_integer = int(round(row['low'] * SCALING_FACTOR))
-                    close_integer = int(round(row['close'] * SCALING_FACTOR))
+                    open = int(round(row['open'] * SCALING_FACTOR))
+                    high = int(round(row['high'] * SCALING_FACTOR))
+                    low = int(round(row['low'] * SCALING_FACTOR))
+                    close = int(round(row['close'] * SCALING_FACTOR))
                     volume = float(row['volume'])
+                    
+                    stockvalues.append(stockvalue)
 
                     # DuckDB Upsert (Insert or Replace)
                     conn.execute("""
-                        INSERT INTO daily_prices (symbol, event_date, open_integer, high_integer, low_integer, close_integer, volume)
+                        INSERT INTO daily_prices (symbol, event_date, open, high, low, close, volume)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         ON CONFLICT(symbol, event_date) DO UPDATE SET
-                            open_integer = EXCLUDED.open_integer,
-                            high_integer = EXCLUDED.high_integer,
-                            low_integer = EXCLUDED.low_integer,
-                            close_integer = EXCLUDED.close_integer,
+                            open = EXCLUDED.open,
+                            high = EXCLUDED.high,
+                            low = EXCLUDED.low,
+                            close = EXCLUDED.close,
                             volume = EXCLUDED.volume
                         """, (
                         symbol, event_date, 
-                        open_integer, high_integer, low_integer, close_integer, 
+                        open, high, low, close, 
                         volume
                     ))
                     
                     success_count += 1
                     time.sleep(0.1)
+                    
+                return stockvalues
                     
             except Exception as e:
                 # A single stock mistake shouldn't break the entire cycle.

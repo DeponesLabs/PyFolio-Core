@@ -4,16 +4,17 @@ from pyfolio_core.core.enums import Exchange
 from pyfolio_core.core.StockService import TradingViewService
 from pyfolio_core.core.FundService import FundDataService
 
-SQLITE_PATH = "/home/valjean/Documents/Databases/Portfolio/sqlite/portfolio.db"
-DUCKDB_PATH = "/home/valjean/Documents/Databases/Portfolio/duckdb/portfolio.duckdb"
+PFOLIO_DB_PATH = "/home/user/Documents/Databases/Portfolio/sqlite/Portfolio.db"
+MARKET_DB_PATH = "/home/user/Documents/Databases/Portfolio/duckdb/GlobalMarket.duckdb"
 
 if __name__ == "__main__":
     
     # ******************************************************************
     # Stock Market
     # ******************************************************************
-    stock_bot: StockService = TradingViewService(DUCKDB_PATH, exchange=Exchange.BIST)
-    stock_bot.run_full_update()
+    stock_bot: StockService = TradingViewService(MARKET_DB_PATH, PFOLIO_DB_PATH, exchange=Exchange.BIST)
+    tickers = stock_bot.get_available_tickers()
+    # stock_bot.run_full_update()
     # Update single symbol
     # unit_price = stock_bot.fetch_price("THYAO")
     # if unit_price:
