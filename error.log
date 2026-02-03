@@ -1,0 +1,54 @@
+2026-02-02 19:59:53,600 | TradingViewService | ERROR | SYNC_FAIL | Exchange: BIST | Symbol: A1CAP | Reason: 'datetime'
+2026-02-02 19:59:56,244 | TradingViewService | ERROR | SYNC_FAIL | Exchange: BIST | Symbol: A1YEN | Reason: 'datetime'
+2026-02-02 19:59:59,093 | TradingViewService | ERROR | SYNC_FAIL | Exchange: BIST | Symbol: ACSEL | Reason: 'datetime'
+2026-02-02 21:21:46,873 | TradingViewService | ERROR | SYNC_FAIL | Exchange: BIST | Symbol: HEDEF | Reason: Connection timed out
+2026-02-02 21:25:14,965 | TradingViewService | ERROR | SYNC_FAIL | Exchange: BIST | Symbol: KTLEV | Reason: Connection timed out
+2026-02-03 12:41:12,034 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-03 12:41:12,035 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:41:53,271 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-03 12:41:53,272 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:41:56,301 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:41:56,302 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:42:08,517 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:42:08,518 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:42:26,652 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:42:26,653 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:01,675 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:01,676 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:12,060 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:12,061 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:14,696 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:14,697 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:16,041 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:16,041 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:29,042 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:29,042 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:37,189 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:37,190 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:42,857 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:42,858 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:49,375 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:49,376 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:44:56,027 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:44:56,028 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:45:01,819 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:45:01,820 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:45:05,050 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:45:05,051 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:45:06,172 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:45:06,172 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:45:18,626 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:45:18,627 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:46:08,734 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:46:08,735 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:47:05,478 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:47:05,478 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:48:33,374 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:48:33,374 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:51:26,320 | pyfolio_core.core.logging | ERROR | Error fetching -> Exchange: BIST | Symbol: QNBTR: Connection timed out
+2026-02-03 12:52:43,160 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:52:43,161 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:53:36,849 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:53:36,849 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-03 12:56:10,015 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-03 12:56:10,016 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol

@@ -2,7 +2,9 @@ import os
 import logging
 import sqlite3
 import duckdb
-
+import pandas as pd
+from datetime import datetime
+from typing import List, Stock
 
 logger = logging.getLogger("PyFolio-Core")
 
@@ -70,7 +72,7 @@ class MarketDatabase:
             self._conn = None
             logger.info("DuckDB Connection Closed.")
     
-    def _get_connection(self):
+    def get_connection(self):
 
         if not self._conn:
             self._connect()
@@ -81,7 +83,7 @@ class MarketDatabase:
         if not self._conn:
             self._connect()
         return self._conn.cursor()
-    
+
 class PortfolioDatabase:
     
     def __init__(self, db_path: str = "data/Portfolio.db"):
@@ -220,7 +222,7 @@ class PortfolioDatabase:
             self._conn = None
             logger.info("Sqlite Connection Closed.")
             
-    def _get_connection(self):
+    def get_connection(self):
 
         if not self._conn:
             self._connect()
@@ -231,9 +233,3 @@ class PortfolioDatabase:
         if not self._conn:
             self._connect()
         return self._conn.cursor()
-    
-    def to_int(self, value: float) -> int:
-        return int(round(value * 1_000_000))
-
-    def to_float(self, value: int) -> float:
-        return value / 1_000_000.0

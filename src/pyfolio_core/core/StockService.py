@@ -1,32 +1,23 @@
+import os
+import datetime
 import time
 import requests
 import logging
-from tvDatafeed import TvDatafeed, Interval
+import random
+from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, List, Union
+import pandas as pd
+
+from tvDatafeed import TvDatafeed, Interval
 
 from pyfolio_core.core.Interfaces import StockService
 from pyfolio_core.core.database import MarketDatabase, PortfolioDatabase
 from pyfolio_core.core.enums import Exchange
 from pyfolio_core.core.constants import SCALING_FACTOR
-from pyfolio_core.core.domainobjects import StockValue
+from pyfolio_core.core.domain_objects import StockValue
+from pyfolio_core.core.logging import ScanReporter
 
-logger = logging.getLogger("TradingViewService")
-logger.setLevel(logging.INFO)
-
-# 1. STDOUT to Screen
-if not logger.handlers:
-    c_handler = logging.StreamHandler()
-    c_handler.setLevel(logging.INFO)
-    c_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S')
-    c_handler.setFormatter(c_format)
-    logger.addHandler(c_handler)
-
-    # 2. STDERR to File
-    f_handler = logging.FileHandler('error.log')
-    f_handler.setLevel(logging.ERROR)
-    f_format = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s')
-    f_handler.setFormatter(f_format)
-    logger.addHandler(f_handler)
+logger = logging.getLogger(__name__)
 
 class TradingViewService(StockService):
 
@@ -37,20 +28,9 @@ class TradingViewService(StockService):
         
         self.exchange = exchange.value if isinstance(exchange, Exchange) else str(exchange).upper()
             
-        self.tv = None  # Lazy-loading
         self._clean_map = str.maketrans('', '', '\u200b\t\n\r ')
 
-    def _get_server_connection(self):
-
-        if self.tv is None:
-            logger.info("Connecting to TradingView servers...")
-            try:
-                self.tv = TvDatafeed()
-            except Exception as e:
-                logger.error(f"Connection Error: {e}")
-                raise ConnectionError("TradingView connection could not be established.")
-        return self.tv
-
+    
     def _clean_symbol(self, symbol: str) -> str:
 
         if not symbol:
@@ -63,13 +43,7 @@ class TradingViewService(StockService):
         tv = self._get_server_connection()
 
         try:
-            data = tv.get_hist(
-                symbol=clean_sym,
-                exchange=self.exchange,
-                interval=Interval.in_daily,
-                n_bars=1
-            )
-
+            data = tv.get_hist(symbol=clean_sym, exchange=self.exchange, interval=Interval.in_daily, n_bars=1)
             if data is not None and not data.empty:
                 price = data['close'].iloc[-1]
                 return float(price)
@@ -93,12 +67,8 @@ class TradingViewService(StockService):
 
         try:
             conn = self.market_db.get_connection()
-            conn.execute("""
-                UPDATE portfolio_assets 
-                SET current_price = ?,
-                    last_updated = current_timestamp
-                WHERE symbol = ?
-            """, (price, clean_sym))
+            conn.execute("""UPDATE portfolio_assets SET current_price = ?, last_updated = current_timestamp WHERE symbol = ?""", 
+                         (price, clean_sym))
             
             logger.info(f"{clean_sym}: {price_float:.2f} updated.")
             return True
@@ -190,6 +160,7 @@ class TradingViewService(StockService):
             logger.error(f"Scanner Exception: {e}")
             return []
 
+
     def fetch_market_daily_close(self) -> StockValue:
         
         logger.info(f"{self.exchange} Daily Market Data Sync Started...")
@@ -200,52 +171,119 @@ class TradingViewService(StockService):
             return
 
         conn = self.market_db.get_connection()
-        tv = self._get_server_connection()
+        # tv = self._get_server_connection()
         
         print(f"Toplam {len(tickers)} hisse işlenecek.")
                 
-        success_count = 0
+        scanner = MarketScanner(self.exchange, tickers)
+        stockvalues = scanner.orchestrate()
+        pipeline = MarketDataPipeline(self.market_db)
+        pipeline.insert_batch(stockvalues)
         
-        stockvalues: list[StockService] = []
-        for symbol in tickers:
-            try:
-                df = tv.get_hist(symbol=symbol, exchange=self.exchange, interval=Interval.in_daily, n_bars=1)
-                
-                if df is not None and not df.empty:
-                    row = df.iloc[-1]
-                    stockvalue = StockValue.from_tv_dataframe(symbol, row)
-                    event_date = row.name.strftime('%Y-%m-%d')
-                    open = int(round(row['open'] * SCALING_FACTOR))
-                    high = int(round(row['high'] * SCALING_FACTOR))
-                    low = int(round(row['low'] * SCALING_FACTOR))
-                    close = int(round(row['close'] * SCALING_FACTOR))
-                    volume = float(row['volume'])
-                    
-                    stockvalues.append(stockvalue)
+        logger.info(f"Sync Complete. Processed: {len(stockvalues)}/{len(tickers)}")
+        
+class MarketDataPipeline:
+    
+    def __init__(self, market_db: MarketDatabase):
+        
+        self.market_db = market_db
 
-                    # DuckDB Upsert (Insert or Replace)
-                    conn.execute("""
-                        INSERT INTO daily_prices (symbol, event_date, open, high, low, close, volume)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                        ON CONFLICT(symbol, event_date) DO UPDATE SET
-                            open = EXCLUDED.open,
-                            high = EXCLUDED.high,
-                            low = EXCLUDED.low,
-                            close = EXCLUDED.close,
-                            volume = EXCLUDED.volume
-                        """, (
-                        symbol, event_date, 
-                        open, high, low, close, 
-                        volume
-                    ))
-                    
-                    success_count += 1
-                    time.sleep(0.1)
-                    
-                return stockvalues
-                    
-            except Exception as e:
-                # A single stock mistake shouldn't break the entire cycle.
-                logger.error(f"SYNC_FAIL | Exchange: {self.exchange} | Symbol: {symbol} | Reason: {e}")
+    def insert_batch(self, stockvalues: list[StockValue]):
         
-        logger.info(f"Sync Complete. Processed: {success_count}/{len(tickers)}")
+        if not stockvalues:
+            logger.warning("No StockValue data provided to insert.")
+            return
+        
+        try:
+            df = pd.DataFrame(stockvalues)
+        
+            conn = self.market_db.get_connection()
+            conn.execute("""INSERT OR REPLACE INTO daily_prices (symbol, event_date, open, high, low, close, volume) 
+                         SELECT symbol, event_date, open, high, low, close, volume FROM df""")
+            
+            logger.info(f"Successfully loaded {len(df)} rows to GlobalMarket.duckdb")
+            
+        except Exception as e:
+            logger.error(f"Bulk Loading Error: {e}")    
+        
+class MarketScanner:
+    
+    def __init__(self, exchange, symbols):
+        
+        self.exchange = exchange
+        self.symbols = symbols
+        self.failed_symbols = []
+        self.results = []
+        self.tv = None  # lazy-loading
+        self.reporter = ScanReporter()
+
+    def _connect_server(self):
+
+        if self.tv is None:
+            logger.info("Connecting to TradingView servers...")
+            try:
+                self.tv = TvDatafeed()
+            except Exception as e:
+                logger.error(f"Connection Error: {e}")
+                raise ConnectionError("TradingView connection could not be established.")
+        return self.tv
+
+
+    def fetch_data(self, symbol)-> tuple[str, list[StockValue] | None]:
+        try:
+            time.sleep(random.uniform(0.5, 1.5)
+            df = self.tv.get_hist(symbol=symbol, exchange=self.exchange, interval=Interval.in_daily, n_bars=1)
+            
+            if df is None or df.empty:
+                return (symbol, None)
+            
+            data = [StockValue.from_tv_dataframe(symbol, row) 
+                    for row in df.itertuples(index=True)]
+            
+            self.reporter.log_fetch_success(self.exchange, symbol, len(data))
+            
+            return (symbol, data)
+            
+        except Exception as error:
+            self.reporter.log_fetch_error(self.exchange, symbol, error)
+            return (symbol, None)
+
+    def run_scan(self, symbol_list: list[str], max_workers:int = 1):
+        
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            batch_results = list(executor.map(self.fetch_data, symbol_list))
+        
+        current_failed = [i for i, k in batch_results if k is None]
+        success_data = [item for i, k in batch_results if k is not None for item in k]
+        # for i, k in batch_results:
+        #     if k is not None:
+        #         for item in k:
+        #             success_data.append(item)
+        
+        return success_data, current_failed
+
+    def orchestrate(self, max_attempt = 5) -> list[StockValue]:
+        
+        to_process = self.symbols
+        attempt = 1
+        
+        self.tv = self._connect_server()
+        
+        while to_process and attempt <= max_attempt:
+            logger.info(f"Attempt {attempt}: Processing {len(to_process)} symbols...")
+            success, to_process = self.run_scan(to_process)
+            self.results.extend(success)
+            
+            if to_process and attempt < max_attempt:
+                wait_time = attempt * 2     # Double wait time in each error.
+                logger.warning(f"Failed: {len(to_process)}. Waiting {wait_time}s...")
+                time.sleep(wait_time)
+                attempt += 1
+        
+        if to_process:
+            self.reporter.log_failures(self.exchange, to_process)
+        else:
+            logger.info("Scan completed successfully. No failures.")
+            
+        return self.results
+

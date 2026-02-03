@@ -6,13 +6,13 @@ class Exchange(Enum):
     String values ​​are the exact equivalents expected by TradingView.
     """
     BIST = "BIST"       # Borsa İstanbul
-    NASDAQ = "NASDAQ"   # ABD Teknoloji Borsası
-    NYSE = "NYSE"       # New York Borsası
+    NASDAQ = "NASDAQ"   # ABD Tech Market
+    NYSE = "NYSE"       # New York Market
     AMEX = "AMEX"       # American Stock Exchange
     LSE = "LSE"         # London Stock Exchange
-    XETRA = "XETRA"     # Almanya Borsası
-    BINANCE = "BINANCE" # Kripto Para (Opsiyonel)
-    FOREX = "FX_IDC"    # Döviz Kurları (Opsiyonel)
+    XETRA = "XETRA"     # German Market
+    BINANCE = "BINANCE" # Kripto Money (Optional)
+    FOREX = "FX_IDC"    # Exchange Rates (Optional)
 
     @classmethod
     def list_all(cls):

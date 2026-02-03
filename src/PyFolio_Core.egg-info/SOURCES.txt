@@ -11,8 +11,8 @@ src/pyfolio_core/core/FundService.py
 src/pyfolio_core/core/Interfaces.py
 src/pyfolio_core/core/StockService.py
 src/pyfolio_core/core/__init__.py
+src/pyfolio_core/core/constants.py
+src/pyfolio_core/core/database.py
+src/pyfolio_core/core/domainobjects.py
 src/pyfolio_core/core/enums.py
-src/pyfolio_core/database/DbManager.py
-src/pyfolio_core/database/__init__.py
-src/pyfolio_core/database/setup_db.py
 src/pyfolio_core/ui/__init__.py

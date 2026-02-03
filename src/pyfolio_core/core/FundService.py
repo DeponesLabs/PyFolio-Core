@@ -4,7 +4,7 @@ import pandas as pd
 from tefas import Crawler
 from typing import Dict
 
-from pyfolio_core.core.database import LocalDatabase
+from pyfolio_core.core.database import MarketDatabase
 from pyfolio_core.core.constants import SCALING_FACTOR
 
 logger = logging.getLogger("FundService")
@@ -26,7 +26,7 @@ if not logger.handlers:
 class FundDataService:
 
     def __init__(self, db_path: str):
-        self.db_manager = LocalDatabase(db_path)
+        self.db_manager = MarketDatabase(db_path)
         self.crawler = Crawler()
 
     def _get_latest_fund_data(self) -> Dict[str, float]:
@@ -148,8 +148,8 @@ class FundDataService:
         logger.info(f"Daily Sync Complete. Processed: {success_count} funds.")
 
 # --- TEST ---
-if __name__ == "__main__":
-    service = FundDataService(db_path="data/portfolio.duckdb")
+# if __name__ == "__main__":
+#     service = FundDataService(db_path="data/portfolio.duckdb")
     
     # 1. Portföy Güncelleme Testi
     # service.update_portfolio_prices()
