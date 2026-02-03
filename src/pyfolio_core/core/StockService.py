@@ -230,8 +230,9 @@ class MarketScanner:
 
 
     def fetch_data(self, symbol)-> tuple[str, list[StockValue] | None]:
+        
         try:
-            time.sleep(random.uniform(0.5, 1.5)
+            time.sleep(random.uniform(0.5, 1.5))
             df = self.tv.get_hist(symbol=symbol, exchange=self.exchange, interval=Interval.in_daily, n_bars=1)
             
             if df is None or df.empty:
