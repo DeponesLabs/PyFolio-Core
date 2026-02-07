@@ -58,9 +58,9 @@ class ScanReporter:
             sys.stderr.write(f"[CRITICAL] Rapor dosyasi olusturulamadi: {e}\n")
             logger.critical(f"Failed to write failure report! Error: {e}")
             
-    def log_fetch_success(self, exchange: str, symbol: str, row_count: int) -> None:
+    def log_fetch_success(self, exchange: str, data: dict) -> None:
         
-        logger.info(f"Exchange: {exchange} | Symbol: {symbol} converted {row_count} rows.")
+        logger.info(f"Exchange: {exchange} | Symbol: {data.symbol} Close: {data.close} Volume: {data.volume}.")
 
     def log_fetch_error(self, exchange: str, symbol: str, error: Exception) -> None:
         

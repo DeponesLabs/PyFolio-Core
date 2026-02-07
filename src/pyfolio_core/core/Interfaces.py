@@ -33,7 +33,7 @@ class StockService(ABC):
         pass
 
     @abstractmethod
-    def fetch_market_daily_close(self) -> None:
+    def sync_market_snapshot(self) -> None:
         """
         Cron Job Method:
         It scans ALL stocks on the selected exchange (self.exchange), extracts 

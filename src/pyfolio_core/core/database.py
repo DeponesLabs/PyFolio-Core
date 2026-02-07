@@ -4,7 +4,7 @@ import sqlite3
 import duckdb
 import pandas as pd
 from datetime import datetime
-from typing import List, Stock
+from typing import List
 
 logger = logging.getLogger("PyFolio-Core")
 
@@ -25,6 +25,9 @@ class MarketDatabase:
                 logger.info(f"Connected to DuckDB: {self.db_path}")
                 if not schema_exists:
                     self._init_schema()
+            except IOError as ioerror:
+                logger.error(f"DuckDB IO Error: {e}")
+                raise  
             except Exception as e:
                 logger.error(f"DuckDB Connection Error: {e}")
                 raise  
@@ -65,6 +68,109 @@ class MarketDatabase:
             logger.error(f"DuckDB Schema Initialization Error: {e}")
             raise
 
+    def create_analysis_views(self):
+        
+        sql_view_technical_signals = """ 
+            CREATE VIEW IF NOT EXISTS view_technical_signals AS
+                SELECT 
+                    symbol,
+                    event_date,
+                    close / 1000000.0 AS close_price,
+                    -- 5 and 20-Day Moving Averages
+                    AVG(close) OVER (PARTITION BY symbol ORDER BY event_date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) / 1000000.0 AS sma_5,
+                    AVG(close) OVER (PARTITION BY symbol ORDER BY event_date ROWS BETWEEN 19 PRECEDING AND CURRENT ROW) / 1000000.0 AS sma_20,
+                    -- Daily Percentage Change
+                    ROUND(((close * 1.0 / LAG(close) OVER (PARTITION BY symbol ORDER BY event_date)) - 1) * 100, 2) AS daily_change_pct,
+                    -- Volume Change (To understand whether interest is increasing or decreasing)
+                    ROUND(((volume * 1.0 / AVG(volume) OVER (PARTITION BY symbol ORDER BY event_date ROWS BETWEEN 19 PRECEDING AND CURRENT ROW)) - 1) * 100, 2) AS volume_momentum_pct
+                FROM daily_prices;
+        """
+        
+        sql_view_quantum_radar = """
+            CREATE VIEW IF NOT EXISTS view_quantum_radar AS
+                WITH IndexChange AS (
+                    -- Örn: XU100 endeksinin o günkü değişimini baz alalım
+                    SELECT event_date, daily_change_pct as index_change
+                    FROM view_technical_signals
+                    WHERE symbol = 'XU100' -- Endeks verisini çektiğini varsayıyoruz
+                )
+                SELECT 
+                    t.symbol,
+                    t.event_date,
+                    t.daily_change_pct,
+                    i.index_change,
+                    -- Alfa: Hisse endeksten ne kadar fazla/az kazandırmış?
+                    (t.daily_change_pct - i.index_change) AS relative_strength_alpha
+                FROM view_technical_signals t
+                JOIN IndexChange i ON t.event_date = i.event_date
+                WHERE t.symbol != 'XU100';
+        """
+        
+        try:
+            self._conn.execute(sql_view_technical_signals)
+            self._conn.execute(sql_view_quantum_radar)
+            
+            self._conn.commit()
+            logger.info("DuckDB Views initialized (STRICT INTEGER MODE).")
+            
+        except Exception as e:
+            logger.error(f"DuckDB Views Initialization Error: {e}")
+            raise
+
+    def create_analysis_views(self):
+        """Injects analytical intelligence (Views) into DuckDB."""
+            
+        sql_view_technical_signals = """
+            CREATE VIEW IF NOT EXISTS view_technical_signals AS
+            SELECT 
+                symbol,
+                event_date,
+                close / 1000000.0 AS close_price,
+                AVG(close) OVER (PARTITION BY symbol ORDER BY event_date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) / 1000000.0 AS sma_5,
+                AVG(close) OVER (PARTITION BY symbol ORDER BY event_date ROWS BETWEEN 19 PRECEDING AND CURRENT ROW) / 1000000.0 AS sma_20,
+                ROUND(((close * 1.0 / LAG(close) OVER (PARTITION BY symbol ORDER BY event_date)) - 1) * 100, 2) AS daily_change_pct,
+                volume
+            FROM daily_prices;
+        """
+
+        sql_view_quantum_radar = """
+            CREATE VIEW IF NOT EXISTS view_quantum_radar AS
+            WITH IndexChange AS (
+                SELECT event_date, daily_change_pct as index_change
+                FROM view_technical_signals
+                WHERE symbol = 'XU100'
+            )
+            SELECT 
+                t.symbol,
+                t.event_date,
+                t.close_price,
+                t.daily_change_pct,
+                i.index_change,
+                (t.daily_change_pct - i.index_change) AS alpha
+            FROM view_technical_signals t
+            JOIN IndexChange i ON t.event_date = i.event_date;
+        """
+        
+        try:
+            self._conn = self.get_connection()
+            self._conn.execute(sql_view_technical_signals)
+            self._conn.execute(sql_view_quantum_radar)
+            logger.info("MarketFlow Analysis Views injected successfully.")
+        except Exception as e:
+            logger.error(f"View Injection Error: {e}")
+            raise
+
+    def get_market_leaders(self, limit=10):
+        """It brings in the most underperforming (Alpha) stocks from the index."""
+        query = """
+            SELECT symbol, close_price, daily_change_pct, alpha 
+            FROM view_quantum_radar 
+            WHERE event_date = (SELECT MAX(event_date) FROM view_quantum_radar)
+            ORDER BY alpha DESC 
+            LIMIT ?;
+        """
+        return self.get_connection().execute(query, [limit]).fetchdf()
+
     def close(self):
         
         if self._conn:
@@ -74,9 +180,7 @@ class MarketDatabase:
     
     def get_connection(self):
 
-        if not self._conn:
-            self._connect()
-        return self._conn
+        return self._connect()
     
     def _get_cursor(self):
         

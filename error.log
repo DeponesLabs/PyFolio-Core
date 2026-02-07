@@ -52,3 +52,117 @@
 2026-02-03 12:53:36,849 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
 2026-02-03 12:56:10,015 | tvDatafeed.main | ERROR | Connection to remote host was lost.
 2026-02-03 12:56:10,016 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 17:54:19,048 | PyFolio-Core | ERROR | DuckDB Connection Error: IO Error: Could not set lock on file "/home/valjean/Documents/Databases/Portfolio/duckdb/GlobalMarket.duckdb": Conflicting lock is held in /usr/share/dbeaver-ce/jre/bin/java (PID 31367). See also https://duckdb.org/docs/stable/connect/concurrency
+2026-02-04 17:56:32,781 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 17:56:32,781 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 17:57:41,651 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 17:57:41,652 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 18:03:43,568 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 18:03:43,569 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 18:06:44,004 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 18:06:44,005 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:02:47,017 | PyFolio-Core | ERROR | DuckDB Connection Error: IO Error: Could not set lock on file "/home/valjean/Documents/Databases/Portfolio/duckdb/GlobalMarket.duckdb": Conflicting lock is held in /usr/share/dbeaver-ce/jre/bin/java (PID 31367). See also https://duckdb.org/docs/stable/connect/concurrency
+2026-02-04 19:03:22,827 | pyfolio_core.core.StockService | ERROR | Checkpoint Write Error (A1CAP): Object of type Timestamp is not JSON serializable
+2026-02-04 19:18:30,243 | pyfolio_core.core.StockService | ERROR | Checkpoint Write Error (A1CAP): Object of type date is not JSON serializable
+2026-02-04 19:41:22,330 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:41:22,330 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:41:53,911 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:41:53,911 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:42:17,300 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:42:17,300 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:43:14,872 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:43:14,872 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:44:00,868 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:44:00,868 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:44:35,336 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:44:35,336 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:47:29,945 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:47:29,946 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:50:18,192 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:50:18,198 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:53:44,576 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:53:44,591 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:54:20,565 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:54:20,566 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:55:34,171 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:55:34,171 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:55:41,092 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:55:41,092 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:56:03,172 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:56:03,172 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:57:55,321 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:57:55,321 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:58:46,020 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 19:58:46,020 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 19:59:22,959 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 19:59:22,959 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:00:14,016 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:00:14,016 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:01:01,716 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:01:01,716 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:01:34,896 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:01:34,896 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:01:43,711 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:01:43,711 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:03:23,392 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:03:23,393 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:04:27,429 | pyfolio_core.core.StockService | ERROR | Bulk Loading Error: Binder Error: Referenced column "event_date" not found in FROM clause!
+Candidate bindings: "_event_date", "_open", "query_time", "volume"
+
+LINE 2:                          SELECT symbol, event_date, open, high, low, close, volume FROM df
+                                                ^
+2026-02-04 20:20:46,820 | PyFolio-Core | ERROR | DuckDB Connection Error: IO Error: Could not set lock on file "/home/valjean/Documents/Databases/Portfolio/duckdb/GlobalMarket.duckdb": Conflicting lock is held in /usr/share/dbeaver-ce/jre/bin/java (PID 66527). See also https://duckdb.org/docs/stable/connect/concurrency
+2026-02-04 20:22:15,712 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:22:15,712 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:22:48,064 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:22:48,064 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:22:54,644 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:22:54,644 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:23:03,292 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:23:03,292 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:23:32,842 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:23:32,842 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:27:15,762 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:27:15,763 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:27:35,380 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:27:35,380 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:28:11,756 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:28:11,756 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:28:21,196 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:28:21,196 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:29:15,084 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:29:15,084 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:30:31,368 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:30:31,368 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:31:36,228 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:31:36,228 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:31:57,776 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:31:57,776 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:32:33,100 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:32:33,100 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:36:44,368 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:36:44,368 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:37:04,732 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:37:04,732 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:38:01,060 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:38:01,060 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:40:50,272 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:40:50,272 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:41:25,544 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:41:25,544 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:41:46,912 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:41:46,912 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:41:50,934 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:41:50,935 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:42:43,020 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:42:43,020 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:42:49,616 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:42:49,616 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:43:28,160 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:43:28,160 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:44:02,236 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:44:02,236 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:45:02,936 | tvDatafeed.main | ERROR | Connection to remote host was lost.
+2026-02-04 20:45:02,936 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol
+2026-02-04 20:45:30,356 | tvDatafeed.main | ERROR | Connection timed out
+2026-02-04 20:45:30,356 | tvDatafeed.main | ERROR | no data, please check the exchange and symbol

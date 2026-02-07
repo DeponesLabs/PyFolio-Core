@@ -13,6 +13,7 @@ class Exchange(Enum):
     XETRA = "XETRA"     # German Market
     BINANCE = "BINANCE" # Kripto Money (Optional)
     FOREX = "FX_IDC"    # Exchange Rates (Optional)
+    TVC = "TVC"         # Dollar Index
 
     @classmethod
     def list_all(cls):
